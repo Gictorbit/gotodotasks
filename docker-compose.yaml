@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  postgresdb:
+    image: postgres:latest
+    container_name: postgresdb
+    ports:
+      - ${PGDB_PORT:-5432}:5432
+    volumes:
+      - pgdb-volume:/data/postgres
+    environment:
+      POSTGRES_USER: ${PGDB_USER:-admin}
+      POSTGRES_PASSWORD: ${PGDB_PASSWORD:-12345678}
+      POSTGRES_DB: ${PGDB_NAME:-pgdb}
+      PGDATA: /data/postgres
+
+    networks:
+      - netmain
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-h", "postgresdb","-p","5432","-d","${PGDB_NAME:-pgdb}","-U","${PGDB_USER:-admin}", "-q" ]
+      timeout: 20s
+      interval: 3s
+      retries: 15
+    restart: always
+
+networks:
+  netmain:
+    driver: bridge
+
+volumes:
+  pgdb-volume:
