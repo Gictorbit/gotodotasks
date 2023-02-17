@@ -2,12 +2,29 @@ syntax = "proto3";
 
 package proto.todotask.v1;
 
+import "google/api/annotations.proto";
+
 option go_package = ".todotask";
+
 service TodoTaskService {
-  rpc SaveTask(SaveTaskRequest) returns (SaveTaskResponse) {}
-  rpc TasksList(TasksListRequest) returns (TasksListResponse) {}
-  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse) {}
-  rpc UpdateTaskStatus(UpdateTaskStatusRequest) returns (UpdateTaskStatusResponse) {}
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse) {
+    option (google.api.http) = {
+      post: "/v1/todoTask/saveTask"
+      body: "*"
+    };
+  }
+  rpc TasksList(TasksListRequest) returns (TasksListResponse) {
+    option (google.api.http) = {get: "/v1/todoTask/tasksList"};
+  }
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse) {
+    option (google.api.http) = {delete: "/v1/todoTask/deleteTask/{id}"};
+  }
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse) {
+    option (google.api.http) = {
+      put: "/v1/todoTask/updateTask"
+      body: "*"
+    };
+  }
 }
 message TodoTask {
   uint32 id = 1;
@@ -16,10 +33,10 @@ message TodoTask {
   uint64 date = 4;
   bool is_completed = 5;
 }
-message SaveTaskRequest {
+message CreateTaskRequest {
   TodoTask task = 1;
 }
-message SaveTaskResponse {
+message CreateTaskResponse {
   uint32 task_id = 1;
 }
 
@@ -33,13 +50,22 @@ message TasksListResponse {
 }
 
 message DeleteTaskRequest {
-  uint32 task_id = 1;
+  uint32 id = 1;
 }
 
-message DeleteTaskResponse {}
-
-message UpdateTaskStatusRequest {
-  uint32 task_id = 1;
-  bool is_done = 2;
+message DeleteTaskResponse {
+  ResponseCode code = 1;
 }
-message UpdateTaskStatusResponse {}
+
+message UpdateTaskRequest {
+  TodoTask task = 1;
+}
+message UpdateTaskResponse {
+  ResponseCode code = 1;
+}
+
+enum ResponseCode {
+  RESPONSE_CODE_UNSPECIFIED = 0;
+  RESPONSE_CODE_SUCCESS = 1;
+  RESPONSE_CODE_NOT_FOUND = 2;
+}

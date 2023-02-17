@@ -1,0 +1,269 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/todotask/v1/todotask.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "TodoTaskService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/todoTask/deleteTask/{id}": {
+      "delete": {
+        "operationId": "TodoTaskService_DeleteTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "TodoTaskService"
+        ]
+      }
+    },
+    "/v1/todoTask/saveTask": {
+      "post": {
+        "operationId": "TodoTaskService_CreateTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TodoTaskService"
+        ]
+      }
+    },
+    "/v1/todoTask/tasksList": {
+      "get": {
+        "operationId": "TodoTaskService_TasksList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1TasksListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "isDone",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "isUndone",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "TodoTaskService"
+        ]
+      }
+    },
+    "/v1/todoTask/updateTask": {
+      "put": {
+        "operationId": "TodoTaskService_UpdateTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TodoTaskService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1CreateTaskRequest": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "$ref": "#/definitions/v1TodoTask"
+        }
+      }
+    },
+    "v1CreateTaskResponse": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1DeleteTaskResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "$ref": "#/definitions/v1ResponseCode"
+        }
+      }
+    },
+    "v1ResponseCode": {
+      "type": "string",
+      "enum": [
+        "RESPONSE_CODE_UNSPECIFIED",
+        "RESPONSE_CODE_SUCCESS",
+        "RESPONSE_CODE_NOT_FOUND"
+      ],
+      "default": "RESPONSE_CODE_UNSPECIFIED"
+    },
+    "v1TasksListResponse": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1TodoTask"
+          }
+        }
+      }
+    },
+    "v1TodoTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "isCompleted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1UpdateTaskRequest": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "$ref": "#/definitions/v1TodoTask"
+        }
+      }
+    },
+    "v1UpdateTaskResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "$ref": "#/definitions/v1ResponseCode"
+        }
+      }
+    }
+  }
+}

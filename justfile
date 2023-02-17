@@ -37,6 +37,7 @@ run-migrations:
 
 # format and lint and generate proto file using buf
 proto:
+    rm -rf api/gen
     @echo "run proto linter..."
     @cd api && buf lint && cd -
 
