@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+.card {
+    margin: 20px auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 600px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+input, button {
+    margin: 10px;
+    padding: 5px;
+    font-size: 16px;
+}
+
+#todo-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.todo-card {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid black;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 30%;
+    min-width: 250px;
+    max-width: 350px;
+}
+
+.todo-card h3 {
+    margin-top: 0;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: grey;
+}
