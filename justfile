@@ -34,3 +34,14 @@ run-migrations:
     [ -d {{sqlMigrationPath}} ] && goose -v -dir {{sqlMigrationPath}} postgres "postgres://pgdbadmin:12345678@127.0.0.1:9475/postgresdb?sslmode=disable" up
     [ -d {{golangMigrationPath}} ] && goose -v -dir {{golangMigrationPath}} postgres "postgres://pgdbadmin:12345678@127.0.0.1:9475/postgresdb?sslmode=disable" up
     echo "all migrations applied"
+
+# format and lint and generate proto file using buf
+proto:
+    @echo "run proto linter..."
+    @cd api && buf lint && cd -
+
+    @echo "format proto..."
+    @cd api && buf format -w && cd -
+
+    @echo "generate proto..."
+    @cd api && buf generate && cd -
