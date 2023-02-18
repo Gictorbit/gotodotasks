@@ -25,6 +25,7 @@ func (tts *TodoTaskService) CreateTask(ctx context.Context, req *taskpb.CreateTa
 		TaskId: req.Task.GetId(),
 	}, nil
 }
+
 func (tts *TodoTaskService) TasksList(context.Context, *taskpb.TasksListRequest) (*taskpb.TasksListResponse, error) {
 	tts.logger.Log(zap.InfoLevel, "task list called")
 	return nil, status.Errorf(codes.Unimplemented, "method TasksList not implemented")
@@ -32,8 +33,4 @@ func (tts *TodoTaskService) TasksList(context.Context, *taskpb.TasksListRequest)
 func (tts *TodoTaskService) DeleteTask(context.Context, *taskpb.DeleteTaskRequest) (*taskpb.DeleteTaskResponse, error) {
 	tts.logger.Log(zap.InfoLevel, "delete task called")
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTask not implemented")
-}
-func (tts *TodoTaskService) UpdateTask(context.Context, *taskpb.UpdateTaskRequest) (*taskpb.UpdateTaskResponse, error) {
-	tts.logger.Log(zap.InfoLevel, "update task called")
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTask not implemented")
 }

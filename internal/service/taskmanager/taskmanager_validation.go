@@ -15,11 +15,19 @@ func (tts *TodoTaskService) ValidateCreateTodoTask(req *taskpb.CreateTaskRequest
 	)
 }
 
+func (tts *TodoTaskService) ValidateUpdateTodoTask(req *taskpb.UpdateTaskRequest) error {
+	return validation.ValidateStruct(req,
+		validation.Field(&req.Task, validation.Required, validation.By(func(value interface{}) error {
+			return ValidateTodoTask(req.Task, true)
+		})),
+	)
+}
+
 func ValidateTodoTask(task *taskpb.TodoTask, isUpdate bool) error {
 	dateValidation := func(value interface{}) error {
 		now := time.Now().UTC().Unix()
-		date := value.(int64)
-		if date < now {
+		date := value.(uint64)
+		if int64(date) < now {
 			return errors.New("date must be greater than current time")
 		}
 		return nil

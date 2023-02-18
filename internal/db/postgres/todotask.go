@@ -17,6 +17,7 @@ type TodoTaskDBInterface interface {
 	RawConn() *pgxpool.Pool
 	GetSQLBuilder() sqlMaker.StatementBuilderType
 	CreateTask(ctx context.Context, userID uint32, task *taskpb.TodoTask) error
+	UpdateTask(ctx context.Context, userID uint32, task *taskpb.TodoTask) error
 }
 
 func (ttd *TodoTaskDataBase) RawConn() *pgxpool.Pool {
