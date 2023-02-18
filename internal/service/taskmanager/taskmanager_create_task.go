@@ -30,7 +30,3 @@ func (tts *TodoTaskService) TasksList(context.Context, *taskpb.TasksListRequest)
 	tts.logger.Log(zap.InfoLevel, "task list called")
 	return nil, status.Errorf(codes.Unimplemented, "method TasksList not implemented")
 }
-func (tts *TodoTaskService) DeleteTask(context.Context, *taskpb.DeleteTaskRequest) (*taskpb.DeleteTaskResponse, error) {
-	tts.logger.Log(zap.InfoLevel, "delete task called")
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTask not implemented")
-}
