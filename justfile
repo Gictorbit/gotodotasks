@@ -46,3 +46,10 @@ proto:
 
     @echo "generate proto..."
     @cd api && buf generate && cd -
+
+build: clean
+     go build -o ./bin/gotodotasks -ldflags="-s -w" github.com/Gictorbit/gotodotasks/cmd
+run: build
+    ./bin/gotodotasks
+clean:
+     @[ -d "./bin" ] && rm -r ./bin && echo "bin directory cleaned" || true

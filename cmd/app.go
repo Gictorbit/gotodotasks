@@ -2,77 +2,89 @@ package main
 
 import (
 	"context"
-	taskpb "github.com/Gictorbit/gotodotasks/api/gen/proto/todotask/v1"
-	taskdb "github.com/Gictorbit/gotodotasks/internal/db/postgres"
-	"github.com/Gictorbit/gotodotasks/internal/service/taskmanager"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"fmt"
+	"github.com/urfave/cli/v2"
 	"log"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
+var (
+	HostAddress string
+	PortGRPC    uint
+	PortHTTP    uint
+	DatabaseURL string
+)
+
 func main() {
-	// Start the gRPC server
+	app := &cli.App{
+		Name:  "client",
+		Usage: "go file transfer client",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "host",
+				Usage:       "host address",
+				Value:       "127.0.0.1",
+				DefaultText: "127.0.0.1",
+				EnvVars:     []string{"HOST_ADDRESS"},
+				Destination: &HostAddress,
+			},
+			&cli.UintFlag{
+				Name:        "grpc-port",
+				Usage:       "grpc server port",
+				Value:       3232,
+				DefaultText: "3232",
+				Aliases:     []string{"gp"},
+				EnvVars:     []string{"GRPC_PORT"},
+				Destination: &PortGRPC,
+			},
+			&cli.UintFlag{
+				Name:        "http-port",
+				Usage:       "http server port",
+				Value:       8686,
+				DefaultText: "8686",
+				Aliases:     []string{"hp"},
+				EnvVars:     []string{"HTTP_PORT"},
+				Destination: &PortHTTP,
+			},
+			&cli.StringFlag{
+				Name:        "database",
+				Usage:       "database url",
+				Aliases:     []string{"db"},
+				EnvVars:     []string{"DATABASE_URL"},
+				Destination: &DatabaseURL,
+			},
+		},
+		Commands: []*cli.Command{
+			{
+				Name:  "taskmanager",
+				Usage: "run task manager server",
+				Action: func(cliCtx *cli.Context) error {
+					grpcAddr := net.JoinHostPort(HostAddress, fmt.Sprintf("%d", PortGRPC))
+					httpAddr := net.JoinHostPort(HostAddress, fmt.Sprintf("%d", PortHTTP))
+					ctx, cancel := context.WithCancel(context.Background())
+					defer cancel()
 
-	logger, _ := zap.NewProduction()
-	taskManagerDB := taskdb.NewTodoTaskDB(nil)
-	taskSrv := taskmanager.NewTodoTaskManager(logger, taskManagerDB)
+					grpcServer := RunTaskManagerGRPCServer(DatabaseURL, grpcAddr)
+					httpServer := RunTaskManagerHTTPService(ctx, grpcAddr, httpAddr)
 
-	grpcServer := grpc.NewServer()
-	taskpb.RegisterTodoTaskServiceServer(grpcServer, taskSrv) // register your service implementation
+					stop := make(chan os.Signal, 1)
+					signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+					<-stop
 
-	grpcAddr := ":9090"
-	lis, err := net.Listen("tcp", grpcAddr)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+					log.Println("shutting down servers")
+					grpcServer.GracefulStop()
+					if err := httpServer.Shutdown(context.Background()); err != nil {
+						return fmt.Errorf("HTTP server shutdown error: %v", err)
+					}
+					return nil
+				},
+			},
+		},
 	}
-	go func() {
-		log.Printf("starting gRPC server on %s", grpcAddr)
-		if err := grpcServer.Serve(lis); err != nil {
-			log.Fatalf("failed to serve: %v", err)
-		}
-	}()
-
-	// Start the HTTP server
-	gwMux := runtime.NewServeMux()
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
-
-	httpAddr := ":8080"
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	if err := taskpb.RegisterTodoTaskServiceHandlerFromEndpoint(ctx, gwMux, grpcAddr, opts); err != nil { // register the gRPC-Gateway handler
-		log.Fatalf("failed to register gRPC-Gateway: %v", err)
-	}
-
-	mux := http.NewServeMux()
-	mux.Handle("/", gwMux)
-	httpServer := &http.Server{Addr: httpAddr, Handler: mux}
-
-	go func() {
-		log.Printf("starting HTTP server on %s", httpAddr)
-		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("failed to serve: %v", err)
-		}
-	}()
-
-	// Handle shutdown signals
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-	<-stop
-
-	log.Println("shutting down servers")
-
-	grpcServer.GracefulStop()
-	if err := httpServer.Shutdown(context.Background()); err != nil {
-		log.Printf("HTTP server shutdown error: %v", err)
+	if e := app.Run(os.Args); e != nil {
+		log.Println("failed to run app", e)
 	}
 }
