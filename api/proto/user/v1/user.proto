@@ -2,4 +2,47 @@ syntax = "proto3";
 
 package proto.user.v1;
 
-option go_package = ".user";
+import "google/api/annotations.proto";
+
+option go_package = ".userpb";
+
+service UserService {
+  // Sign up a new user with the given email and password.
+  rpc Signup(SignupRequest) returns (SignupResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/signup"
+      body: "*"
+    };
+  }
+
+  // Sign in a user with the given email and password.
+  rpc SignIn(SignInRequest) returns (SignInResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/signin"
+      body: "*"
+    };
+  }
+}
+message User {
+  uint32 id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+}
+message SignupRequest {
+  User user = 1;
+}
+
+message SignupResponse {
+  string token = 1;
+  uint32 id = 2;
+}
+
+message SignInRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SignInResponse {
+  string token = 1;
+}
