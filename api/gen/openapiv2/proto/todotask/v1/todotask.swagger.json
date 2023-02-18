@@ -16,38 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/todoTask/deleteTask/{id}": {
-      "delete": {
-        "operationId": "TodoTaskService_DeleteTask",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1DeleteTaskResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "TodoTaskService"
-        ]
-      }
-    },
-    "/v1/todoTask/saveTask": {
+    "/v1/todotask/createtask": {
       "post": {
         "operationId": "TodoTaskService_CreateTask",
         "responses": {
@@ -79,7 +48,38 @@
         ]
       }
     },
-    "/v1/todoTask/tasksList": {
+    "/v1/todotask/deletetask/{id}": {
+      "delete": {
+        "operationId": "TodoTaskService_DeleteTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "TodoTaskService"
+        ]
+      }
+    },
+    "/v1/todotask/taskslist": {
       "get": {
         "operationId": "TodoTaskService_TasksList",
         "responses": {
@@ -121,7 +121,7 @@
         ]
       }
     },
-    "/v1/todoTask/updateTask": {
+    "/v1/todotask/updatetask": {
       "put": {
         "operationId": "TodoTaskService_UpdateTask",
         "responses": {

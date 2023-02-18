@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	taskpb "github.com/Gictorbit/gotodotasks/api/gen/proto/todotask/v1"
 	sqlMaker "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
@@ -15,6 +16,7 @@ type TodoTaskDataBase struct {
 type TodoTaskDBInterface interface {
 	RawConn() *pgxpool.Pool
 	GetSQLBuilder() sqlMaker.StatementBuilderType
+	CreateTask(ctx context.Context, userID uint32, task *taskpb.TodoTask) error
 }
 
 func (ttd *TodoTaskDataBase) RawConn() *pgxpool.Pool {

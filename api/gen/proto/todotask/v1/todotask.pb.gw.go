@@ -201,7 +201,7 @@ func RegisterTodoTaskServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/CreateTask", runtime.WithHTTPPathPattern("/v1/todoTask/saveTask"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/CreateTask", runtime.WithHTTPPathPattern("/v1/todotask/createtask"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -226,7 +226,7 @@ func RegisterTodoTaskServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/TasksList", runtime.WithHTTPPathPattern("/v1/todoTask/tasksList"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/TasksList", runtime.WithHTTPPathPattern("/v1/todotask/taskslist"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -251,7 +251,7 @@ func RegisterTodoTaskServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/DeleteTask", runtime.WithHTTPPathPattern("/v1/todoTask/deleteTask/{id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/DeleteTask", runtime.WithHTTPPathPattern("/v1/todotask/deletetask/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -276,7 +276,7 @@ func RegisterTodoTaskServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/UpdateTask", runtime.WithHTTPPathPattern("/v1/todoTask/updateTask"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/UpdateTask", runtime.WithHTTPPathPattern("/v1/todotask/updatetask"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -340,7 +340,7 @@ func RegisterTodoTaskServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/CreateTask", runtime.WithHTTPPathPattern("/v1/todoTask/saveTask"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/CreateTask", runtime.WithHTTPPathPattern("/v1/todotask/createtask"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -362,7 +362,7 @@ func RegisterTodoTaskServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/TasksList", runtime.WithHTTPPathPattern("/v1/todoTask/tasksList"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/TasksList", runtime.WithHTTPPathPattern("/v1/todotask/taskslist"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -384,7 +384,7 @@ func RegisterTodoTaskServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/DeleteTask", runtime.WithHTTPPathPattern("/v1/todoTask/deleteTask/{id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/DeleteTask", runtime.WithHTTPPathPattern("/v1/todotask/deletetask/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -406,7 +406,7 @@ func RegisterTodoTaskServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/UpdateTask", runtime.WithHTTPPathPattern("/v1/todoTask/updateTask"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.todotask.v1.TodoTaskService/UpdateTask", runtime.WithHTTPPathPattern("/v1/todotask/updatetask"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -426,13 +426,13 @@ func RegisterTodoTaskServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 }
 
 var (
-	pattern_TodoTaskService_CreateTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "todoTask", "saveTask"}, ""))
+	pattern_TodoTaskService_CreateTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "todotask", "createtask"}, ""))
 
-	pattern_TodoTaskService_TasksList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "todoTask", "tasksList"}, ""))
+	pattern_TodoTaskService_TasksList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "todotask", "taskslist"}, ""))
 
-	pattern_TodoTaskService_DeleteTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "todoTask", "deleteTask", "id"}, ""))
+	pattern_TodoTaskService_DeleteTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "todotask", "deletetask", "id"}, ""))
 
-	pattern_TodoTaskService_UpdateTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "todoTask", "updateTask"}, ""))
+	pattern_TodoTaskService_UpdateTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "todotask", "updatetask"}, ""))
 )
 
 var (
