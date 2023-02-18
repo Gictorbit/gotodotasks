@@ -5,13 +5,20 @@ import (
 	taskpb "github.com/Gictorbit/gotodotasks/api/gen/proto/todotask/v1"
 	taskdb "github.com/Gictorbit/gotodotasks/internal/db/postgres"
 	"github.com/Gictorbit/gotodotasks/internal/service/taskmanager"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpcZap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpcCtxTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 	"log"
 	"net"
 	"net/http"
+	"runtime/debug"
 )
 
 func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
@@ -19,13 +26,38 @@ func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 	if err != nil {
 		log.Fatal(err)
 	}
+	unaryServerOptions := []grpc.UnaryServerInterceptor{
+		grpcCtxTags.UnaryServerInterceptor(grpcCtxTags.WithFieldExtractor(grpcCtxTags.CodeGenRequestFieldExtractor)),
+		grpcZap.UnaryServerInterceptor(logger),
+		grpcZap.PayloadUnaryServerInterceptor(logger, func(ctx context.Context, fullMethodName string, servingObject interface{}) bool {
+			return LogRequest == true
+		}),
+		grpcRecovery.UnaryServerInterceptor(grpcRecovery.WithRecoveryHandler(func(p interface{}) (err error) {
+			logger.Error("stack trace from panic " + string(debug.Stack()))
+			return status.Errorf(codes.Internal, "%v", p)
+		})),
+	}
+	streamServerOptions := []grpc.StreamServerInterceptor{
+		grpcCtxTags.StreamServerInterceptor(grpcCtxTags.WithFieldExtractor(grpcCtxTags.CodeGenRequestFieldExtractor)),
+		grpcZap.StreamServerInterceptor(logger),
+		grpcZap.PayloadStreamServerInterceptor(logger, func(ctx context.Context, fullMethodName string, servingObject interface{}) bool {
+			return LogRequest == true
+		}),
+		grpcRecovery.StreamServerInterceptor(grpcRecovery.WithRecoveryHandler(func(p interface{}) (err error) {
+			logger.Error("stack trace from panic " + string(debug.Stack()))
+			return status.Errorf(codes.Internal, "%v", p)
+		})),
+	}
 	taskManagerDB, err := taskdb.NewTodoTaskFromDsn(databaseURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 	taskSrv := taskmanager.NewTodoTaskManager(logger, taskManagerDB)
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(streamServerOptions...)),
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(unaryServerOptions...)),
+	)
 	taskpb.RegisterTodoTaskServiceServer(grpcServer, taskSrv) // register your service implementation
 
 	lis, err := net.Listen("tcp", grpcAddr)

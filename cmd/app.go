@@ -16,6 +16,7 @@ var (
 	PortGRPC    uint
 	PortHTTP    uint
 	DatabaseURL string
+	LogRequest  bool
 )
 
 func main() {
@@ -55,6 +56,15 @@ func main() {
 				Aliases:     []string{"db"},
 				EnvVars:     []string{"DATABASE_URL"},
 				Destination: &DatabaseURL,
+			},
+			&cli.BoolFlag{
+				Name:        "log-request",
+				Usage:       "log incoming requests",
+				Aliases:     []string{"lgr"},
+				Value:       false,
+				DefaultText: "false",
+				EnvVars:     []string{"LOG_REQUEST"},
+				Destination: &LogRequest,
 			},
 		},
 		Commands: []*cli.Command{
