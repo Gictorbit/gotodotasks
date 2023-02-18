@@ -50,6 +50,6 @@ proto:
 build: clean
      go build -o ./bin/gotodotasks -ldflags="-s -w" github.com/Gictorbit/gotodotasks/cmd
 run: build
-    ./bin/gotodotasks
+    ./bin/gotodotasks --database "postgres://pgdbadmin:12345678@127.0.0.1:9475/postgresdb?sslmode=disable" taskmanager
 clean:
      @[ -d "./bin" ] && rm -r ./bin && echo "bin directory cleaned" || true

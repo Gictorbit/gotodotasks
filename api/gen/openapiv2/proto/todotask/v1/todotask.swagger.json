@@ -104,16 +104,16 @@
             "type": "string"
           },
           {
-            "name": "isDone",
+            "name": "isCompleted",
             "in": "query",
             "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "isUndone",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "TASKS_COMPLETED_FILTER_ALL",
+              "TASKS_COMPLETED_FILTER_DONE",
+              "TASKS_COMPLETED_FILTER_UNDONE"
+            ],
+            "default": "TASKS_COMPLETED_FILTER_ALL"
           }
         ],
         "tags": [
@@ -212,9 +212,19 @@
       "enum": [
         "RESPONSE_CODE_UNSPECIFIED",
         "RESPONSE_CODE_SUCCESS",
-        "RESPONSE_CODE_NOT_FOUND"
+        "RESPONSE_CODE_NOT_FOUND",
+        "RESPONSE_CODE_FAILED"
       ],
       "default": "RESPONSE_CODE_UNSPECIFIED"
+    },
+    "v1TasksCompletedFilter": {
+      "type": "string",
+      "enum": [
+        "TASKS_COMPLETED_FILTER_ALL",
+        "TASKS_COMPLETED_FILTER_DONE",
+        "TASKS_COMPLETED_FILTER_UNDONE"
+      ],
+      "default": "TASKS_COMPLETED_FILTER_ALL"
     },
     "v1TasksListResponse": {
       "type": "object",

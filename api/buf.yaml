@@ -6,4 +6,6 @@ breaking:
     - FILE
 lint:
   use:
-    - DEFAULT
+    - BASIC
+  except:
+    - ENUM_ZERO_VALUE_SUFFIX

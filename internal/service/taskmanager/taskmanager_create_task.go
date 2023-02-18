@@ -25,8 +25,3 @@ func (tts *TodoTaskService) CreateTask(ctx context.Context, req *taskpb.CreateTa
 		TaskId: req.Task.GetId(),
 	}, nil
 }
-
-func (tts *TodoTaskService) TasksList(context.Context, *taskpb.TasksListRequest) (*taskpb.TasksListResponse, error) {
-	tts.logger.Log(zap.InfoLevel, "task list called")
-	return nil, status.Errorf(codes.Unimplemented, "method TasksList not implemented")
-}

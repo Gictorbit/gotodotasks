@@ -14,6 +14,7 @@ func (tts *TodoTaskService) ValidateCreateTodoTask(req *taskpb.CreateTaskRequest
 		})),
 	)
 }
+
 func (tts *TodoTaskService) ValidateDeleteTodoTask(req *taskpb.DeleteTaskRequest) error {
 	return validation.ValidateStruct(req,
 		validation.Field(&req.Id, validation.Required),

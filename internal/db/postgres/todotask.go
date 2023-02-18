@@ -19,6 +19,7 @@ type TodoTaskDBInterface interface {
 	CreateTask(ctx context.Context, userID uint32, task *taskpb.TodoTask) error
 	UpdateTask(ctx context.Context, userID uint32, task *taskpb.TodoTask) error
 	DeleteTask(ctx context.Context, userID uint32, taskID uint32) error
+	TasksList(ctx context.Context, userID uint32, opts ...TasksListOption) ([]*taskpb.TodoTask, error)
 }
 
 var _ TodoTaskDBInterface = &TodoTaskDataBase{}

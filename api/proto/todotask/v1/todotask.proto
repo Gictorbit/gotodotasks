@@ -39,11 +39,14 @@ message CreateTaskRequest {
 message CreateTaskResponse {
   uint32 task_id = 1;
 }
-
+enum TasksCompletedFilter {
+  TASKS_COMPLETED_FILTER_ALL = 0;
+  TASKS_COMPLETED_FILTER_DONE = 1;
+  TASKS_COMPLETED_FILTER_UNDONE = 2;
+}
 message TasksListRequest {
   string title = 1;
-  bool is_done = 2;
-  bool is_undone = 3;
+  TasksCompletedFilter is_completed = 2;
 }
 message TasksListResponse {
   repeated TodoTask tasks = 2;
@@ -68,4 +71,5 @@ enum ResponseCode {
   RESPONSE_CODE_UNSPECIFIED = 0;
   RESPONSE_CODE_SUCCESS = 1;
   RESPONSE_CODE_NOT_FOUND = 2;
+  RESPONSE_CODE_FAILED = 3;
 }
