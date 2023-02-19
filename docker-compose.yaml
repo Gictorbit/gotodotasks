@@ -21,39 +21,64 @@ services:
       interval: 3s
       retries: 15
     restart: always
+
+  migrations:
+    image: gotodotask/migrations:latest
+    container_name: todotask-migrations
+    build:
+      context: ./internal/migrations
+      dockerfile: Dockerfile
+    command:
+      - "-v"
+      - "--dir"
+      - "sqls"
+      - "postgqres"
+      - "postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@postgresdb:5432/${PGDB_NAME:-pgdb}?sslmode=disable"
+      - "up"
+    depends_on:
+      - postgresdb
+    networks:
+      - netmain
+
   user:
     image: gotodotask/user:latest
     container_name: gotodotask-user
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        GO_VERSION: "1.20"
     ports:
       - ${USER_GRPC_PORT:-6060}:3000
       - ${USER_HTTP_PORT:-7070}:4000
     environment:
       LOG_REQUEST: true
       JWT_SECRET: DF6806F10F45D95ACF44
-      DATABASE_URL: postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@127.0.0.1:${PGDB_PORT:-5432}/${PGDB_NAME:-pgdb}?sslmode=disable
+      DATABASE_URL: postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@postgresdb:5432/${PGDB_NAME:-pgdb}?sslmode=disable
     command:
       - user
     networks:
       - netmain
     depends_on:
       - postgresdb
+      - migrations
     restart: always
+
   taskmanager:
     image: gotodotask/taskmanager:latest
     container_name: gotodotask-taskmanager
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        GO_VERSION: "1.20"
     ports:
       - ${TASK_MANAGER_GRPC_PORT:-5050}:3000
       - ${TASK_MANAGER_HTTP_PORT:-4040}:4000
     environment:
       LOG_REQUEST: true
       JWT_SECRET: DF6806F10F45D95ACF44
-      DATABASE_URL: postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@127.0.0.1:${PGDB_PORT:-5432}/${PGDB_NAME:-pgdb}?sslmode=disable
+      DATABASE_URL: postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@postgresdb:5432/${PGDB_NAME:-pgdb}?sslmode=disable
     command:
       - taskmanager
     networks:
@@ -61,6 +86,7 @@ services:
     depends_on:
       - postgresdb
       - user
+      - migrations
     restart: always
 networks:
   netmain:
