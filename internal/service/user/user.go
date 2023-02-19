@@ -12,7 +12,7 @@ import (
 type UserService struct {
 	logger *zap.Logger
 	dbConn userdb.UserDBInterface
-	auth   *authutil.JWTManager
+	auth   *authutil.AuthManager
 	userpb.UnimplementedUserServiceServer
 }
 
@@ -21,7 +21,7 @@ var (
 )
 
 // NewUserService returns new NewUserService
-func NewUserService(logger *zap.Logger, dbConn userdb.UserDBInterface, auth *authutil.JWTManager) *UserService {
+func NewUserService(logger *zap.Logger, dbConn userdb.UserDBInterface, auth *authutil.AuthManager) *UserService {
 	return &UserService{
 		logger: logger,
 		dbConn: dbConn,

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	taskpb "github.com/Gictorbit/gotodotasks/api/gen/proto/todotask/v1"
+	"github.com/Gictorbit/gotodotasks/internal/authutil"
 	taskdb "github.com/Gictorbit/gotodotasks/internal/db/postgres/taskmanager"
 	"github.com/Gictorbit/gotodotasks/internal/service/taskmanager"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -36,6 +37,7 @@ func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 			logger.Error("stack trace from panic " + string(debug.Stack()))
 			return status.Errorf(codes.Internal, "%v", p)
 		})),
+		authutil.UnaryServerInterceptor(),
 	}
 	streamServerOptions := []grpc.StreamServerInterceptor{
 		grpcCtxTags.StreamServerInterceptor(grpcCtxTags.WithFieldExtractor(grpcCtxTags.CodeGenRequestFieldExtractor)),
@@ -47,12 +49,14 @@ func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 			logger.Error("stack trace from panic " + string(debug.Stack()))
 			return status.Errorf(codes.Internal, "%v", p)
 		})),
+		authutil.StreamServerInterceptor(),
 	}
 	taskManagerDB, err := taskdb.NewTodoTaskFromDsn(databaseURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	taskSrv := taskmanager.NewTodoTaskManager(logger, taskManagerDB)
+	authManager := authutil.NewAuthManager(SecretKey, Issuer, TokenValidTime)
+	taskSrv := taskmanager.NewTodoTaskManager(logger, taskManagerDB, authManager)
 
 	grpcServer := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(streamServerOptions...)),

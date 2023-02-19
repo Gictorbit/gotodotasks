@@ -47,6 +47,7 @@ func RunUserGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 			logger.Error("stack trace from panic " + string(debug.Stack()))
 			return status.Errorf(codes.Internal, "%v", p)
 		})),
+		authutil.UnaryServerInterceptor(),
 	}
 	streamServerOptions := []grpc.StreamServerInterceptor{
 		grpcCtxTags.StreamServerInterceptor(grpcCtxTags.WithFieldExtractor(grpcCtxTags.CodeGenRequestFieldExtractor)),
@@ -58,12 +59,13 @@ func RunUserGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 			logger.Error("stack trace from panic " + string(debug.Stack()))
 			return status.Errorf(codes.Internal, "%v", p)
 		})),
+		authutil.StreamServerInterceptor(),
 	}
 	userDatabase, err := userdb.NewUserDBFromDsn(databaseURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	authManager := authutil.NewJWTManager(SecretKey, Issuer, TokenValidTime)
+	authManager := authutil.NewAuthManager(SecretKey, Issuer, TokenValidTime)
 	userServer := user.NewUserService(logger, userDatabase, authManager)
 
 	grpcServer := grpc.NewServer(

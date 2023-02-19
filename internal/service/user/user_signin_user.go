@@ -34,7 +34,7 @@ func (us *UserService) SignIn(ctx context.Context, req *userpb.SignInRequest) (*
 	if e := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); e != nil {
 		return nil, ErrInvalidEmailORPassword
 	}
-	token, err := us.auth.NewToken(user)
+	token, err := us.auth.GenerateNewToken(user)
 	if err != nil {
 		us.logger.Error("create token failed",
 			zap.Error(err),

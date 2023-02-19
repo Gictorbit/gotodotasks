@@ -74,6 +74,30 @@ func main() {
 				EnvVars:     []string{"LOG_REQUEST"},
 				Destination: &LogRequest,
 			},
+			&cli.StringFlag{
+				Name:        "secret",
+				Usage:       "jwt secret",
+				Value:       randSecret,
+				DefaultText: randSecret,
+				EnvVars:     []string{"JWT_SECRET"},
+				Destination: &SecretKey,
+			},
+			&cli.StringFlag{
+				Name:        "issuer",
+				Usage:       "issuer name",
+				Value:       "go.task.todo",
+				DefaultText: "go.task.todo",
+				EnvVars:     []string{"JWT_SECRET"},
+				Destination: &Issuer,
+			},
+			&cli.DurationFlag{
+				Name:        "valid-time",
+				Usage:       "jwt toke valid time duration",
+				Value:       time.Hour * 48,
+				DefaultText: "48 hour",
+				EnvVars:     []string{"JWT_VALID_TIME"},
+				Destination: &TokenValidTime,
+			},
 		},
 		Commands: []*cli.Command{
 			{
@@ -103,32 +127,6 @@ func main() {
 			{
 				Name:  "user",
 				Usage: "run user service",
-				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:        "secret",
-						Usage:       "jwt secret",
-						Value:       randSecret,
-						DefaultText: randSecret,
-						EnvVars:     []string{"JWT_SECRET"},
-						Destination: &SecretKey,
-					},
-					&cli.StringFlag{
-						Name:        "issuer",
-						Usage:       "issuer name",
-						Value:       "go.task.todo",
-						DefaultText: "go.task.todo",
-						EnvVars:     []string{"JWT_SECRET"},
-						Destination: &Issuer,
-					},
-					&cli.DurationFlag{
-						Name:        "valid-time",
-						Usage:       "jwt toke valid time duration",
-						Value:       time.Hour * 48,
-						DefaultText: "48 hour",
-						EnvVars:     []string{"JWT_VALID_TIME"},
-						Destination: &TokenValidTime,
-					},
-				},
 				Action: func(cliCtx *cli.Context) error {
 					grpcAddr := net.JoinHostPort(HostAddress, fmt.Sprintf("%d", PortGRPC))
 					httpAddr := net.JoinHostPort(HostAddress, fmt.Sprintf("%d", PortHTTP))

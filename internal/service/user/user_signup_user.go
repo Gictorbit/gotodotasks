@@ -13,6 +13,8 @@ import (
 
 // Signup signs up a new user and returns jwt token
 func (us *UserService) Signup(ctx context.Context, req *userpb.SignupRequest) (*userpb.SignupResponse, error) {
+	//TODO add email uniqueness
+	//TODO add create user rollback
 	if err := us.ValidateSignupUser(req); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -48,7 +50,7 @@ func (us *UserService) Signup(ctx context.Context, req *userpb.SignupRequest) (*
 		)
 		return nil, ErrInternalError
 	}
-	token, err := us.auth.NewToken(user)
+	token, err := us.auth.GenerateNewToken(user)
 	if err != nil {
 		us.logger.Error("create token failed",
 			zap.Error(err),
