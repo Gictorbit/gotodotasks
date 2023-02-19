@@ -2,7 +2,7 @@ package taskmanager
 
 import (
 	taskpb "github.com/Gictorbit/gotodotasks/api/gen/proto/todotask/v1"
-	taskdb "github.com/Gictorbit/gotodotasks/internal/db/postgres"
+	taskdb "github.com/Gictorbit/gotodotasks/internal/db/postgres/taskmanager"
 	"go.uber.org/zap"
 )
 

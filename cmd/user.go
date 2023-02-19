@@ -2,9 +2,14 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
 	taskpb "github.com/Gictorbit/gotodotasks/api/gen/proto/todotask/v1"
-	taskdb "github.com/Gictorbit/gotodotasks/internal/db/postgres/taskmanager"
-	"github.com/Gictorbit/gotodotasks/internal/service/taskmanager"
+	userpb "github.com/Gictorbit/gotodotasks/api/gen/proto/user/v1"
+	"github.com/Gictorbit/gotodotasks/internal/authutil"
+	userdb "github.com/Gictorbit/gotodotasks/internal/db/postgres/user"
+	"github.com/Gictorbit/gotodotasks/internal/service/user"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcZap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
@@ -21,7 +26,15 @@ import (
 	"runtime/debug"
 )
 
-func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
+func GenerateRandomSecretKey() (string, error) {
+	key := make([]byte, 32)
+	if _, err := rand.Read(key); err != nil {
+		return "", fmt.Errorf("error generating key:%v", err)
+	}
+	return base64.URLEncoding.EncodeToString(key), nil
+}
+
+func RunUserGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatal(err)
@@ -48,17 +61,18 @@ func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 			return status.Errorf(codes.Internal, "%v", p)
 		})),
 	}
-	taskManagerDB, err := taskdb.NewTodoTaskFromDsn(databaseURL)
+	userDatabase, err := userdb.NewUserDBFromDsn(databaseURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	taskSrv := taskmanager.NewTodoTaskManager(logger, taskManagerDB)
+	authManager := authutil.NewJWTManager(SecretKey, Issuer, TokenValidTime)
+	userServer := user.NewUserService(logger, userDatabase, authManager)
 
 	grpcServer := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(streamServerOptions...)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(unaryServerOptions...)),
 	)
-	taskpb.RegisterTodoTaskServiceServer(grpcServer, taskSrv) // register your service implementation
+	userpb.RegisterUserServiceServer(grpcServer, userServer) // register your service implementation
 
 	lis, err := net.Listen("tcp", grpcAddr)
 	if err != nil {
@@ -73,7 +87,7 @@ func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 	return grpcServer
 }
 
-func RunTaskManagerHTTPService(ctx context.Context, grpcAddr, httpAddr string) *http.Server {
+func RunUserHTTPService(ctx context.Context, grpcAddr, httpAddr string) *http.Server {
 	gwMux := runtime.NewServeMux()
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),

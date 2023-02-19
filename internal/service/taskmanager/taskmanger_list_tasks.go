@@ -3,7 +3,7 @@ package taskmanager
 import (
 	"context"
 	taskpb "github.com/Gictorbit/gotodotasks/api/gen/proto/todotask/v1"
-	taskdb "github.com/Gictorbit/gotodotasks/internal/db/postgres"
+	taskdb "github.com/Gictorbit/gotodotasks/internal/db/postgres/taskmanager"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
