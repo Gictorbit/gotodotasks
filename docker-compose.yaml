@@ -28,13 +28,10 @@ services:
     build:
       context: ./internal/migrations
       dockerfile: Dockerfile
-    command:
-      - "-v"
-      - "--dir"
-      - "sqls"
-      - "postgqres"
-      - "postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@postgresdb:5432/${PGDB_NAME:-pgdb}?sslmode=disable"
-      - "up"
+    environment:
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING: postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@postgresdb:5432/${PGDB_NAME:-pgdb}?sslmode=disable
+    command: [ "-v","--dir","sqls","up" ]
     depends_on:
       - postgresdb
     networks:
