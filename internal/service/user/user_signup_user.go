@@ -2,9 +2,8 @@ package user
 
 import (
 	"context"
-	"errors"
 	userpb "github.com/Gictorbit/gotodotasks/api/gen/proto/user/v1"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -13,21 +12,9 @@ import (
 
 // Signup signs up a new user and returns jwt token
 func (us *UserService) Signup(ctx context.Context, req *userpb.SignupRequest) (*userpb.SignupResponse, error) {
-	//TODO add email uniqueness
 	//TODO add create user rollback
 	if err := us.ValidateSignupUser(req); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-	userFound, err := us.dbConn.GetUserByEmail(ctx, req.Email)
-	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-		us.logger.Error("failed to get user by email",
-			zap.Error(err),
-			zap.String("email", req.Email),
-		)
-		return nil, ErrInternalError
-	}
-	if userFound != nil {
-		return nil, status.Error(codes.AlreadyExists, "user already exists with this email")
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -44,6 +31,12 @@ func (us *UserService) Signup(ctx context.Context, req *userpb.SignupRequest) (*
 		Roles:    []userpb.UserRole{userpb.UserRole_USER_ROLE_NORMAL_USER},
 	}
 	if e := us.dbConn.CreateUser(ctx, user); e != nil {
+		pgErr, ok := e.(*pgconn.PgError)
+		if ok && pgErr.Code == "23505" {
+			if pgErr.ConstraintName == "users_email_key" {
+				return nil, status.Error(codes.AlreadyExists, "user already exists with this email")
+			}
+		}
 		us.logger.Error("failed to create new user",
 			zap.Error(e),
 			zap.String("email", req.Email),
