@@ -6,12 +6,17 @@ import (
 )
 
 const createNewUserQuery = `
-	INSERT INTO users(id,name,email,password)
-	VALUES(DEFAULT,$1,$2,$3)
+	INSERT INTO users(id,name,email,password,roles)
+	VALUES(DEFAULT,$1,$2,$3,$4)
 	RETURNING id;
 `
 
 // CreateUser creates a new user
 func (udb *UserDataBase) CreateUser(ctx context.Context, user *userpb.User) error {
-	return udb.RawConn().QueryRow(ctx, createNewUserQuery, user.Name, user.Email, user.Password).Scan(&user.Id)
+	return udb.RawConn().QueryRow(ctx, createNewUserQuery,
+		user.Name,
+		user.Email,
+		user.Password,
+		user.Roles,
+	).Scan(&user.Id)
 }
