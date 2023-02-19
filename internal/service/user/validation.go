@@ -18,7 +18,7 @@ func (us *UserService) ValidateSignupUser(req *userpb.SignupRequest) error {
 // ValidateSignInUser validates signIn user request
 func (us *UserService) ValidateSignInUser(req *userpb.SignInRequest) error {
 	return validation.ValidateStruct(req,
-		validation.Field(&req.Email, validation.Required, is.Email, validation.Max(255)),
+		validation.Field(&req.Email, validation.Required, is.Email, validation.Length(1, 255)),
 		validation.Field(&req.Password, validation.Required, validation.Length(8, 255)),
 	)
 }
