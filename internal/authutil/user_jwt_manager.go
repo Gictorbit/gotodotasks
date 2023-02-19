@@ -54,7 +54,7 @@ func (jm *JWTManager) NewToken(userInfo *userpb.User) (string, error) {
 
 func (jm *JWTManager) generateToken(claims TokenUserClaims) (string, error) {
 	unsignedToken := jwt.NewWithClaims(jm.signingMethod, claims)
-	token, err := unsignedToken.SignedString(jm.secretKey)
+	token, err := unsignedToken.SignedString([]byte(jm.secretKey))
 	if err != nil {
 		return "", err
 	}
