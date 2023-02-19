@@ -12,6 +12,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 	"log"
 	"net"
 	"net/http"
@@ -54,7 +55,10 @@ func RunUserGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 }
 
 func RunUserHTTPService(ctx context.Context, grpcAddr, httpAddr string) *http.Server {
-	gwMux := runtime.NewServeMux()
+	gwMux := runtime.NewServeMux(runtime.WithMetadata(func(ctx context.Context, request *http.Request) metadata.MD {
+		md := metadata.Pairs("token", request.Header.Get("token"))
+		return md
+	}))
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
