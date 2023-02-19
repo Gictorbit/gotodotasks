@@ -3,9 +3,7 @@ package main
 import (
 	"context"
 	"crypto/rand"
-	"encoding/base64"
 	"fmt"
-	taskpb "github.com/Gictorbit/gotodotasks/api/gen/proto/todotask/v1"
 	userpb "github.com/Gictorbit/gotodotasks/api/gen/proto/user/v1"
 	"github.com/Gictorbit/gotodotasks/internal/authutil"
 	userdb "github.com/Gictorbit/gotodotasks/internal/db/postgres/user"
@@ -26,12 +24,12 @@ import (
 	"runtime/debug"
 )
 
-func GenerateRandomSecretKey() (string, error) {
-	key := make([]byte, 32)
-	if _, err := rand.Read(key); err != nil {
-		return "", fmt.Errorf("error generating key:%v", err)
+func GenerateRandomSecretKey(len int) (string, error) {
+	b := make([]byte, len)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
 	}
-	return base64.URLEncoding.EncodeToString(key), nil
+	return fmt.Sprintf("%X", b), nil
 }
 
 func RunUserGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
@@ -92,7 +90,7 @@ func RunUserHTTPService(ctx context.Context, grpcAddr, httpAddr string) *http.Se
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
-	if err := taskpb.RegisterTodoTaskServiceHandlerFromEndpoint(ctx, gwMux, grpcAddr, opts); err != nil { // register the gRPC-Gateway handler
+	if err := userpb.RegisterUserServiceHandlerFromEndpoint(ctx, gwMux, grpcAddr, opts); err != nil { // register the gRPC-Gateway handler
 		log.Fatalf("failed to register gRPC-Gateway: %v", err)
 	}
 

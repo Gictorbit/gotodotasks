@@ -24,12 +24,12 @@ var (
 )
 
 func main() {
-	randSecret, err := GenerateRandomSecretKey()
+	randSecret, err := GenerateRandomSecretKey(10)
 	if err != nil {
 		log.Fatal(err)
 	}
 	app := &cli.App{
-		Name:  "client",
+		Name:  "gotodotask",
 		Usage: "go file transfer client",
 		Flags: []cli.Flag{
 			&cli.StringFlag{

@@ -47,6 +47,7 @@ func (jm *JWTManager) NewToken(userInfo *userpb.User) (string, error) {
 		UserID:    userInfo.Id,
 		IP:        userInfo.Ip,
 		UserAgent: userInfo.Agent,
+		Roles:     userInfo.Roles,
 	}
 	return jm.generateToken(userClaims)
 }
