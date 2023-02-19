@@ -43,8 +43,8 @@ func main() {
 			&cli.UintFlag{
 				Name:        "grpc-port",
 				Usage:       "grpc server port",
-				Value:       3232,
-				DefaultText: "3232",
+				Value:       3000,
+				DefaultText: "3000",
 				Aliases:     []string{"gp"},
 				EnvVars:     []string{"GRPC_PORT"},
 				Destination: &PortGRPC,
@@ -52,8 +52,8 @@ func main() {
 			&cli.UintFlag{
 				Name:        "http-port",
 				Usage:       "http server port",
-				Value:       8686,
-				DefaultText: "8686",
+				Value:       4000,
+				DefaultText: "4000",
 				Aliases:     []string{"hp"},
 				EnvVars:     []string{"HTTP_PORT"},
 				Destination: &PortHTTP,

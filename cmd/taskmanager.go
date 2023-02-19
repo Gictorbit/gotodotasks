@@ -35,7 +35,7 @@ func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	go func() {
-		log.Printf("starting task manager gRPC server on %s", grpcAddr)
+		log.Printf("starting taskmanager gRPC server on %s", grpcAddr)
 		if err := grpcServer.Serve(lis); err != nil {
 			log.Fatalf("failed to serve: %v", err)
 		}
