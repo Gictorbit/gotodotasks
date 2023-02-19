@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto.user.v1;
+
+option go_package = ".user";
+
+message User {
+  uint32 id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+  repeated UserRole roles = 5;
+  string agent = 6;
+  string ip = 7;
+}
+
+enum UserRole {
+  USER_ROLE_UNSPECIFIED = 0;
+  USER_ROLE_NORMAL_USER = 1;
+  USER_ROLE_ADMIN = 2;
+  USER_ROLE_TESTER = 3;
+}
