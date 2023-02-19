@@ -58,7 +58,6 @@ services:
       - netmain
     depends_on:
       - postgresdb
-      - migrations
     restart: always
 
   taskmanager:
@@ -83,7 +82,6 @@ services:
     depends_on:
       - postgresdb
       - user
-      - migrations
     restart: always
 networks:
   netmain:
