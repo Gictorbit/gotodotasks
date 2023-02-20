@@ -14,7 +14,7 @@ services:
       PGDATA: /data/postgres
 
     networks:
-      - traefik-net
+      - netproxy
     healthcheck:
       test: [ "CMD", "pg_isready", "-h", "postgresdb","-p","5432","-d","${PGDB_NAME:-pgdb}","-U","${PGDB_USER:-admin}", "-q" ]
       timeout: 20s
@@ -35,7 +35,7 @@ services:
     depends_on:
       - postgresdb
     networks:
-      - traefik-net
+      - netproxy
     labels:
       - traefik.enable=false
 
@@ -57,7 +57,7 @@ services:
     command:
       - user
     networks:
-      - traefik-net
+      - netproxy
     depends_on:
       - postgresdb
     restart: always
@@ -84,7 +84,7 @@ services:
     command:
       - taskmanager
     networks:
-      - traefik-net
+      - netproxy
     depends_on:
       - postgresdb
       - user
@@ -110,9 +110,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
     networks:
-      - traefik-net
+      - netproxy
 networks:
-  traefik-net:
+  netproxy:
     external: true
 
 volumes:
