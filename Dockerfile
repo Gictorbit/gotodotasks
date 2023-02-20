@@ -5,7 +5,7 @@ ARG GOPROXYURL="https://goproxy.io"
 FROM golang:${GO_VERSION}-alpine AS builder
 # install packages
 RUN sed -i 's#dl-cdn.alpinelinux.org#alpine.global.ssl.fastly.net#g' /etc/apk/repositories
-RUN apk --no-cache add --update ca-certificates tzdata upx
+RUN apk --no-cache add --update ca-certificates tzdata
 
 # copy source code
 WORKDIR /taskmanager
@@ -25,6 +25,5 @@ WORKDIR /production
 COPY --from=builder /taskmanager/bin .
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
-EXPOSE 3000
-EXPOSE 4000
+
 ENTRYPOINT ["./gotodotask"]

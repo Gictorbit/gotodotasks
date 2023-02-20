@@ -35,8 +35,8 @@ func main() {
 			&cli.StringFlag{
 				Name:        "host",
 				Usage:       "host address",
-				Value:       "127.0.0.1",
-				DefaultText: "127.0.0.1",
+				Value:       "0.0.0.0",
+				DefaultText: "0.0.0.0",
 				EnvVars:     []string{"HOST_ADDRESS"},
 				Destination: &HostAddress,
 			},
