@@ -14,7 +14,7 @@ services:
       PGDATA: /data/postgres
 
     networks:
-      - netmain
+      - traefik-net
     healthcheck:
       test: [ "CMD", "pg_isready", "-h", "postgresdb","-p","5432","-d","${PGDB_NAME:-pgdb}","-U","${PGDB_USER:-admin}", "-q" ]
       timeout: 20s
@@ -35,7 +35,9 @@ services:
     depends_on:
       - postgresdb
     networks:
-      - netmain
+      - traefik-net
+    labels:
+      - traefik.enable=false
 
   user:
     image: gotodotask/user:latest
@@ -55,10 +57,14 @@ services:
     command:
       - user
     networks:
-      - netmain
+      - traefik-net
     depends_on:
       - postgresdb
     restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.user.rule=PathPrefix(`/v1/user`)
+      - traefik.http.services.user.loadbalancer.server.port=${USER_HTTP_PORT:-7070}
 
   taskmanager:
     image: gotodotask/taskmanager:latest
@@ -78,14 +84,36 @@ services:
     command:
       - taskmanager
     networks:
-      - netmain
+      - traefik-net
     depends_on:
       - postgresdb
       - user
     restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.taskmanager.rule=PathPrefix(`/v1/todotask`)
+      - traefik.http.services.taskmanager.loadbalancer.server.port=${TASK_MANAGER_HTTP_PORT:-4040}
+
+  traefik:
+    image: "traefik:2.9.8"
+    container_name: gotodotask-traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    networks:
+      - traefik-net
 networks:
-  netmain:
-    driver: bridge
+  traefik-net:
+    external: true
 
 volumes:
   pgdb-volume:
