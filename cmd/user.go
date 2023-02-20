@@ -62,7 +62,7 @@ func RunUserHTTPService(ctx context.Context, grpcAddr, httpAddr string) *http.Se
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
-	if err := userpb.RegisterUserServiceHandlerFromEndpoint(ctx, gwMux, grpcAddr, opts); err != nil { // register the gRPC-Gateway handler
+	if err := userpb.RegisterUserServiceHandlerFromEndpoint(ctx, gwMux, grpcAddr, opts); err != nil {
 		log.Fatalf("failed to register gRPC-Gateway: %v", err)
 	}
 

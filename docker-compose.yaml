@@ -62,9 +62,11 @@ services:
       - postgresdb
     restart: always
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.user.rule=PathPrefix(`/v1/user`)
-      - traefik.http.services.user.loadbalancer.server.port=${USER_HTTP_PORT:-7070}
+      - "traefik.enable=true"
+      - "traefik.http.routers.user.entrypoints=web"
+      - "traefik.http.routers.user.rule=PathPrefix(`/v1/user`)"
+      - "traefik.http.services.user.loadbalancer.server.port=4000"
+      - "traefik.docker.network=netproxy"
 
   taskmanager:
     image: gotodotask/taskmanager:latest
@@ -90,9 +92,11 @@ services:
       - user
     restart: always
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.taskmanager.rule=PathPrefix(`/v1/todotask`)
-      - traefik.http.services.taskmanager.loadbalancer.server.port=${TASK_MANAGER_HTTP_PORT:-4040}
+      - "traefik.enable=true"
+      - "traefik.http.routers.taskmanager.entrypoints=web"
+      - "traefik.http.routers.taskmanager.rule=PathPrefix(`/v1/todotask`)"
+      - "traefik.http.services.taskmanager.loadbalancer.server.port=4000"
+      - "traefik.docker.network=netproxy"
 
   traefik:
     image: "traefik:2.9.8"
@@ -106,6 +110,7 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+#      - "--providers.docker.useBindPortIP=true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
@@ -113,7 +118,7 @@ services:
       - netproxy
 networks:
   netproxy:
-    external: true
+    driver: bridge
 
 volumes:
   pgdb-volume:
