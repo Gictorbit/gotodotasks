@@ -67,6 +67,12 @@ services:
       - "traefik.http.routers.user.rule=PathPrefix(`/v1/user`)"
       - "traefik.http.services.user.loadbalancer.server.port=4000"
       - "traefik.docker.network=netproxy"
+      - "traefik.http.middlewares.cors.headers.accessControlAllowMethods=GET,POST,DELETE,OPTIONS,PUT"
+      - "traefik.http.middlewares.cors.headers.accessControlAllowHeaders=Content-Type"
+      - "traefik.http.middlewares.cors.headers.accessControlAllowOriginList=*"
+      - "traefik.http.middlewares.cors.headers.accessControlMaxAge=100"
+      - "traefik.http.middlewares.cors.headers.addVaryHeader=true"
+      - "traefik.http.routers.user.middlewares=cors"
 
   taskmanager:
     image: gotodotask/taskmanager:latest
@@ -97,6 +103,12 @@ services:
       - "traefik.http.routers.taskmanager.rule=PathPrefix(`/v1/todotask`)"
       - "traefik.http.services.taskmanager.loadbalancer.server.port=4000"
       - "traefik.docker.network=netproxy"
+      - "traefik.http.middlewares.cors.headers.accessControlAllowMethods=GET,POST,DELETE,OPTIONS,PUT"
+      - "traefik.http.middlewares.cors.headers.accessControlAllowHeaders=Content-Type"
+      - "traefik.http.middlewares.cors.headers.accessControlAllowOriginList=*"
+      - "traefik.http.middlewares.cors.headers.accessControlMaxAge=100"
+      - "traefik.http.middlewares.cors.headers.addVaryHeader=true"
+      - "traefik.http.routers.taskmanager.middlewares=cors"
 
   traefik:
     image: "traefik:2.9.8"
