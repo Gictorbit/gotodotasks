@@ -6,17 +6,17 @@ golangMigrationPath := "internal/migrations/golang"
 # run docker compose up
 dcompose-up:
     @echo "run docker compose up"
-    docker-compose -f {{composeFile}} --env-file {{composeEnvFile}} up -d
+    docker compose -f {{composeFile}} --env-file {{composeEnvFile}} up -d
     @echo "env variables are:"
     @cat compose.env
 
 # stop docker compose containers
 dcompose-stop:
-    docker-compose -f {{composeFile}} --env-file {{composeEnvFile}} stop
+    docker compose -f {{composeFile}} --env-file {{composeEnvFile}} stop
 
 # down and clean all compose file containers
 dcompose-clean:
-    docker-compose -f {{composeFile}} --env-file {{composeEnvFile}} down --volumes --remove-orphans --rmi local
+    docker compose -f {{composeFile}} --env-file {{composeEnvFile}} down --volumes --remove-orphans --rmi local
 
 # create new sql migration
 create-sql MigrateName:

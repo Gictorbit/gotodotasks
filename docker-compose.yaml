@@ -131,6 +131,5 @@ services:
 networks:
   netproxy:
     driver: bridge
-
 volumes:
   pgdb-volume:
