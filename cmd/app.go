@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/kataras/iris/v12"
 	"github.com/urfave/cli/v2"
 	"log"
 	"net"
@@ -20,7 +21,7 @@ var (
 	LogRequest     bool
 	SecretKey      string
 	TokenValidTime time.Duration
-	Issuer         string
+	Domain         string
 )
 
 func main() {
@@ -83,12 +84,11 @@ func main() {
 				Destination: &SecretKey,
 			},
 			&cli.StringFlag{
-				Name:        "issuer",
-				Usage:       "issuer name",
-				Value:       "go.task.todo",
-				DefaultText: "go.task.todo",
-				EnvVars:     []string{"ISSUER"},
-				Destination: &Issuer,
+				Name:        "domain",
+				Usage:       "server domain name",
+				Required:    true,
+				EnvVars:     []string{"DOMAIN"},
+				Destination: &Domain,
 			},
 			&cli.DurationFlag{
 				Name:        "valid-time",
@@ -145,6 +145,30 @@ func main() {
 					if err := httpServer.Shutdown(context.Background()); err != nil {
 						return fmt.Errorf("HTTP server shutdown error: %v", err)
 					}
+					return nil
+				},
+			},
+			{
+				Name:  "webserver",
+				Usage: "run web server",
+				Action: func(cliCtx *cli.Context) error {
+					hostAddr := net.JoinHostPort(HostAddress, fmt.Sprintf("%d", PortHTTP))
+					app := NewWebServer()
+					idleConnsClosed := make(chan struct{})
+					iris.RegisterOnInterrupt(func() {
+						timeout := 10 * time.Second
+						ctx, cancel := context.WithTimeout(context.Background(), timeout)
+						defer cancel()
+						// close all hosts.
+						if e := app.Shutdown(ctx); e != nil {
+							log.Fatal(e)
+						}
+						close(idleConnsClosed)
+					})
+
+					// [...]
+					app.Listen(hostAddr, iris.WithoutInterruptHandler, iris.WithoutServerError(iris.ErrServerClosed))
+					<-idleConnsClosed
 					return nil
 				},
 			},

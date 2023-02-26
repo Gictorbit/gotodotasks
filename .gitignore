@@ -3,6 +3,7 @@
 .idea
 /bin
 bin/*
+traefik.yml
 # Binaries for programs and plugins
 *.exe
 *.exe~

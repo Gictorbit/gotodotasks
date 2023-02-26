@@ -51,6 +51,7 @@ services:
       - ${USER_GRPC_PORT:-6060}:3000
       - ${USER_HTTP_PORT:-7070}:4000
     environment:
+      DOMAIN: todotask.server
       LOG_REQUEST: true
       JWT_SECRET: DF6806F10F45D95ACF44
       DATABASE_URL: postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@postgresdb:5432/${PGDB_NAME:-pgdb}?sslmode=disable
@@ -89,6 +90,7 @@ services:
       - ${TASK_MANAGER_GRPC_PORT:-3030}:3000
       - ${TASK_MANAGER_HTTP_PORT:-4040}:4000
     environment:
+      DOMAIN: todotask.server
       LOG_REQUEST: true
       JWT_SECRET: DF6806F10F45D95ACF44
       DATABASE_URL: postgres://${PGDB_USER:-admin}:${PGDB_PASSWORD:-12345678}@postgresdb:5432/${PGDB_NAME:-pgdb}?sslmode=disable
@@ -115,6 +117,30 @@ services:
       - "traefik.http.middlewares.cors.headers.accessControlMaxAge=100"
       - "traefik.http.middlewares.cors.headers.addVaryHeader=true"
       - "traefik.http.routers.taskmanager.middlewares=cors"
+
+  webserver:
+    image: gotodotask/webserver:latest
+    container_name: gotodotask-webserver
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GO_VERSION: "1.20"
+    ports:
+      - ${WEB_SERVER_PORT:-7575}:4000
+    environment:
+     DOMAIN: http://todotask.server
+    command:
+      - webserver
+    networks:
+      - netproxy
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webserver.entrypoints=web"
+      - "traefik.http.routers.webserver.rule=PathPrefix(`/`)"
+      - "traefik.http.services.webserver.loadbalancer.server.port=4000"
+      - "traefik.docker.network=netproxy"
 
   traefik:
     image: "traefik:2.9.8"

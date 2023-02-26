@@ -26,7 +26,7 @@ func RunTaskManagerGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 		log.Fatal(err)
 	}
 	grpcServer := NewGrpcServer(grpcAddr, logger)
-	authManager := authutil.NewAuthManager(SecretKey, Issuer, TokenValidTime)
+	authManager := authutil.NewAuthManager(SecretKey, Domain, TokenValidTime)
 	taskSrv := taskmanager.NewTodoTaskManager(logger, taskManagerDB, authManager)
 	taskpb.RegisterTodoTaskServiceServer(grpcServer, taskSrv) // register your service implementation
 
