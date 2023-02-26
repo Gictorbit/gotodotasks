@@ -87,7 +87,7 @@ func main() {
 				Usage:       "issuer name",
 				Value:       "go.task.todo",
 				DefaultText: "go.task.todo",
-				EnvVars:     []string{"JWT_SECRET"},
+				EnvVars:     []string{"ISSUER"},
 				Destination: &Issuer,
 			},
 			&cli.DurationFlag{
