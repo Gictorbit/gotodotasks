@@ -9,7 +9,7 @@ function main() {
   // Check user Login
   const isAuth = localStorage.getItem('Token');
   if(!!!isAuth){
-    location.href = 'login.html';
+    location.href = 'login';
   }
 
   const token = localStorage.getItem('Token');
@@ -198,7 +198,7 @@ function removeTodo(index,todoId) {
   // Check user Login
   const token = localStorage.getItem('Token');
   if(!!!token){
-    location.href = 'login.html';
+    location.href = 'login';
   }
   console.log("remove ID",todoId)
   fetch(`${taskManagerURL}/deletetask/${todoId}`,{

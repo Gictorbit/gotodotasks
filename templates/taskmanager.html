@@ -14,22 +14,22 @@
       rel="icon"
       type="image/png"
       sizes="32x32"
-      href="./assets/images/favicon-32x32.png"
+      href="assets/images/favicon-32x32.png"
     />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./css/taskmanager.css" />
-    <link rel="preload" href="./assets/images/icon-check.svg" as="image" type="image/svg+xml" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/taskmanager.css" />
+    <link rel="preload" href="assets/images/icon-check.svg" as="image" type="image/svg+xml" crossorigin="anonymous">
   </head>
   <body>
-  <div id="serverDomain" style="display:none;">http://todotask.server</div>
+  <div id="serverDomain" style="display:none;">{{.domain}}</div>
     <header class="card">
       <h1>TODO</h1>
       <button id="theme-switcher">
-        <img src="./assets/images/icon-sun.svg" alt="Change color theme" />
+        <img src="assets/images/icon-sun.svg" alt="Change color theme" />
       </button>
     </header>
     <main>
@@ -65,6 +65,6 @@
     <footer>
       <p>Drag and drop to reorder list</p>
     </footer>
-    <script src="./js/taskmanager.js"></script>
+    <script src="js/taskmanager.js"></script>
   </body>
 </html>

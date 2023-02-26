@@ -35,7 +35,7 @@ func RunUserGRPCServer(databaseURL, grpcAddr string) *grpc.Server {
 	if err != nil {
 		log.Fatal(err)
 	}
-	authManager := authutil.NewAuthManager(SecretKey, Issuer, TokenValidTime)
+	authManager := authutil.NewAuthManager(SecretKey, Domain, TokenValidTime)
 	userServer := user.NewUserService(logger, userDatabase, authManager)
 
 	grpcServer := NewGrpcServer(grpcAddr, logger)

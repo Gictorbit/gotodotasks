@@ -35,7 +35,7 @@ function handleAuthentication(type) {
                 // Log token
                 console.log('Token:', data.token);
                 localStorage.setItem('Token', data.token);
-                location.href = 'taskmanager.html';
+                location.href = 'taskmanager';
             })
             .catch(error => {
                 // Handle error
@@ -71,7 +71,7 @@ function handleAuthentication(type) {
                 // Log token
                 console.log('Token:', data.token);
                 localStorage.setItem('Token', data.token);
-                location.href = 'taskmanager.html';
+                location.href = 'taskmanager';
             })
             .catch(error => {
                 // Handle error
