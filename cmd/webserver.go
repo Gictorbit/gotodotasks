@@ -1,44 +1,60 @@
 package main
 
 import (
-	"github.com/kataras/iris/v12"
+	"html/template"
+	"net/http"
 )
 
-func NewWebServer() *iris.Application {
-	app := iris.New()
-
-	app.Logger().SetLevel("debug")
-	// Register the HTML view engine
-	app.RegisterView(iris.HTML("templates", ".html"))
-
+func NewWebServer() http.Handler {
+	mux := http.NewServeMux()
 	// Define the route handlers
-	app.Get("/", func(ctx iris.Context) {
-		ctx.Redirect("/login", iris.StatusFound)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/login", http.StatusFound)
 	})
 
-	app.Get("/login", showLogin)
-	app.Get("/taskmanager", showTaskManager)
+	mux.HandleFunc("/login", showLogin)
+	mux.HandleFunc("/taskmanager", showTaskManager)
 
 	// Serve the static files
-	app.HandleDir("/assets", "templates/assets")
-	app.HandleDir("/css", "templates/css")
-	app.HandleDir("/js", "templates/js")
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("templates/assets/"))))
+	mux.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("templates/css/"))))
+	mux.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("templates/js/"))))
 
-	return app
+	return mux
 }
 
-func showLogin(ctx iris.Context) {
-	ctx.ViewData("domain", Domain)
-	if err := ctx.View("login.html"); err != nil {
-		ctx.HTML("<h3>%s</h3>", err.Error())
+func showLogin(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("templates/login.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	data := struct {
+		Domain string
+	}{
+		Domain: Domain,
+	}
+
+	if err := tmpl.Execute(w, data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func showTaskManager(ctx iris.Context) {
-	ctx.ViewData("domain", Domain)
-	if err := ctx.View("taskmanager.html"); err != nil {
-		ctx.HTML("<h3>%s</h3>", err.Error())
+func showTaskManager(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("templates/taskmanager.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	data := struct {
+		Domain string
+	}{
+		Domain: Domain,
+	}
+
+	if err := tmpl.Execute(w, data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

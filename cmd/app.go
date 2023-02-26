@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/kataras/iris/v12"
 	"github.com/urfave/cli/v2"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -153,22 +153,11 @@ func main() {
 				Usage: "run web server",
 				Action: func(cliCtx *cli.Context) error {
 					hostAddr := net.JoinHostPort(HostAddress, fmt.Sprintf("%d", PortHTTP))
-					app := NewWebServer()
-					idleConnsClosed := make(chan struct{})
-					iris.RegisterOnInterrupt(func() {
-						timeout := 10 * time.Second
-						ctx, cancel := context.WithTimeout(context.Background(), timeout)
-						defer cancel()
-						// close all hosts.
-						if e := app.Shutdown(ctx); e != nil {
-							log.Fatal(e)
-						}
-						close(idleConnsClosed)
-					})
-
-					// [...]
-					app.Listen(hostAddr, iris.WithoutInterruptHandler, iris.WithoutServerError(iris.ErrServerClosed))
-					<-idleConnsClosed
+					server := NewWebServer()
+					log.Println("Server listening on", hostAddr)
+					if err := http.ListenAndServe(hostAddr, server); err != nil {
+						log.Fatal(err)
+					}
 					return nil
 				},
 			},
