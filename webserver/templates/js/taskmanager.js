@@ -2,7 +2,8 @@
 document.addEventListener("DOMContentLoaded", main);
 
 /* main() FUNCTION */
-const taskmanagerURL = 'http://todotask.server'
+const serverDomain = document.getElementById('serverDomain').textContent;
+const taskManagerURL = `${serverDomain}/v1/todotask`
 function main() {
 
   // Check user Login
@@ -14,7 +15,7 @@ function main() {
   const token = localStorage.getItem('Token');
   console.log(token);
   localStorage.removeItem("todos");
-  fetch(`${taskmanagerURL}/v1/todotask/taskslist`, {
+  fetch(`${taskManagerURL}/taskslist`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -96,7 +97,7 @@ function main() {
         }
       };
       console.log(currentTodo)
-      fetch(`${taskmanagerURL}/v1/todotask/createtask`,{
+      fetch(`${taskManagerURL}/createtask`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -173,7 +174,7 @@ function stateTodo(index, completed) {
   };
   console.log("todo task update",updateTodo)
 
-  fetch(`${taskmanagerURL}/v1/todotask/updatetask`,{
+  fetch(`${taskManagerURL}/updatetask`,{
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -200,7 +201,7 @@ function removeTodo(index,todoId) {
     location.href = 'login.html';
   }
   console.log("remove ID",todoId)
-  fetch(`${taskmanagerURL}/v1/todotask/deletetask/${todoId}`,{
+  fetch(`${taskManagerURL}/deletetask/${todoId}`,{
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

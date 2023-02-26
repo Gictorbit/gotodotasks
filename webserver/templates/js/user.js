@@ -1,7 +1,8 @@
 const form = document.querySelector('.signup-form');
 const loginFormEl = document.querySelector('.login-form');
 
-const url = 'http://todotask.server'
+const serverDomain = document.getElementById('serverDomain').textContent;
+const userURL = `${serverDomain}/v1/user`
 
 function handleAuthentication(type) {
     if (type === 'signUp') {
@@ -14,7 +15,7 @@ function handleAuthentication(type) {
         };
 
         // Send POST request to the server
-        fetch(`${url}/v1/user/signup`, {
+        fetch(`${userURL}/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -50,7 +51,7 @@ function handleAuthentication(type) {
         };
 
         // Send POST request to the server
-        fetch(`${url}/v1/user/signin`, {
+        fetch(`${userURL}/signin`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
