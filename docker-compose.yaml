@@ -40,7 +40,7 @@ services:
       - traefik.enable=false
 
   user:
-    image: gotodotask/user:latest
+    image: gotodotask:latest
     container_name: gotodotask-user
     build:
       context: .
@@ -79,7 +79,7 @@ services:
       - "traefik.http.routers.user.middlewares=cors"
 
   taskmanager:
-    image: gotodotask/taskmanager:latest
+    image: gotodotask:latest
     container_name: gotodotask-taskmanager
     build:
       context: .
@@ -119,7 +119,7 @@ services:
       - "traefik.http.routers.taskmanager.middlewares=cors"
 
   webserver:
-    image: gotodotask/webserver:latest
+    image: gotodotask:latest
     container_name: gotodotask-webserver
     build:
       context: .
